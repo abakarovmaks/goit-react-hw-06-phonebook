@@ -17,7 +17,7 @@ const App = ({ contacts }) => {
 
       <Filter />
 
-      <CSSTransition in={contacts.length > 0} timeout={0} ommountOnExit>
+      <CSSTransition in={contacts.length > 0} timeout={0} unmountOnExit>
         <ContactList />
       </CSSTransition>
     </Container>

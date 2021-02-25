@@ -9,7 +9,7 @@ const addContact = createAction('contacts/add', (name, number) => ({
   },
 }));
 
-const deleteContact = createAction('contacts/remove');
+const deleteContact = createAction('contacts/delete');
 
 const changeFilter = createAction('contacts/changeFilter');
 

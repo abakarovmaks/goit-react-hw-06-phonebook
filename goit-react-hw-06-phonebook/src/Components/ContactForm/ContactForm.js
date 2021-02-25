@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import phoneBookActions from '../../redux/phoneBook/phoneBook-actions';
-import Notification from '../../components/Notification/Notification';
+import Notification from '../Notification/Notification';
+
 import PropTypes from 'prop-types';
 import styles from './ContactForm.module.css';
 
