@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import styles from './ContactList.module.css';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import phoneBookActions from '../../redux/phoneBook/phoneBook-actions';
 import '../Fade/Fade.css';
 
-export default function ContactList({ contacts, onDelete }) {
+const ContactList = ({ contacts, onDelete }) => {
   return (
     <TransitionGroup component="ul" className={styles.list}>
       {contacts.map(({ id, name, number }) => (
@@ -31,9 +33,27 @@ export default function ContactList({ contacts, onDelete }) {
       ))}
     </TransitionGroup>
   );
-}
+};
 
 ContactList.propTypes = {
   onDelete: PropTypes.func,
   contacts: PropTypes.arrayOf(PropTypes.object),
 };
+
+const getFilteredContactsList = (allContacts, filter) => {
+  const normalizedFilter = filter.toLowerCase();
+
+  return allContacts.filter(({ name }) =>
+    name.toLowerCase().includes(normalizedFilter)
+  );
+};
+
+const mapStateToProps = ({ phoneBook: { contacts, filter } }) => ({
+  contacts: getFilteredContactsList(contacts, filter),
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onDelete: (id) => dispatch(phoneBookActions.onDelete(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
