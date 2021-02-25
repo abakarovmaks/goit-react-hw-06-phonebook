@@ -1,24 +1,51 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import phoneBookActions from '../../redux/phoneBook/phoneBook-actions';
+import Notification from '../../components/Notification/Notification';
 import PropTypes from 'prop-types';
 import styles from './ContactForm.module.css';
 
-export default class ContactForm extends Component {
+class ContactForm extends Component {
   state = {
     name: '',
     number: '',
+    message: null,
   };
 
   static propTypes = {
-    onAddContact: PropTypes.func,
+    contacts: PropTypes.arrayOf(PropTypes.object),
+    onSubmit: PropTypes.func,
   };
 
-  static defaultProps = {};
+  setMessage = (note) => {
+    this.setState({ message: note });
+    setTimeout(() => {
+      this.setState({ message: null });
+    }, 2500);
+  };
 
-  handleSubmitForm = (e) => {
+  handleSubmit = (e) => {
     const { name, number } = this.state;
     e.preventDefault();
 
-    this.props.onAddContact(name, number);
+    if (name === '') {
+      this.setMessage('Enter contact name, please!');
+      return;
+    }
+    if (number === '') {
+      this.setMessage('Enter concact phone, please!');
+      return;
+    }
+    if (
+      this.props.contacts.find(
+        (item) => item.name.toLowerCase() === name.toLowerCase()
+      )
+    ) {
+      this.setMessage('Contact already exists!');
+      return;
+    }
+
+    this.props.onSubmit(name, number);
     this.setState({
       name: '',
       number: '',
@@ -33,11 +60,12 @@ export default class ContactForm extends Component {
   };
 
   render() {
-    const { name, number } = this.state;
+    const { name, number, message } = this.state;
 
     return (
       <div className={styles.container}>
-        <form className={styles.form} onSubmit={this.handleSubmitForm}>
+        <Notification message={message} />
+        <form className={styles.form} onSubmit={this.handleSubmit}>
           <label>
             <input
               className={styles.input}
@@ -66,3 +94,14 @@ export default class ContactForm extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  contacts: state.phoneBook.contacts,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onSubmit: (name, number) =>
+    dispatch(phoneBookActions.addContact(name, number)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
