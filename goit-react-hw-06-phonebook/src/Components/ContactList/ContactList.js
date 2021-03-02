@@ -6,7 +6,7 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import phoneBookActions from '../../redux/phoneBook/phoneBook-actions';
 import '../Fade/Fade.css';
 
-const ContactList = ({ contacts, onDelete }) => {
+const ContactList = ({ contacts, onDelete, clearFilter }) => {
   return (
     <TransitionGroup component="ul" className={styles.list}>
       {contacts.map(({ id, name, number }) => (
@@ -22,7 +22,7 @@ const ContactList = ({ contacts, onDelete }) => {
             <button
               className={styles.btn}
               onClick={() => {
-                onDelete(id);
+                onDelete(id, clearFilter());
               }}
               aria-label="Удалить контакт"
             >
@@ -54,6 +54,7 @@ const mapStateToProps = ({ phoneBook: { contacts, filter } }) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   onDelete: (id) => dispatch(phoneBookActions.deleteContact(id)),
+  clearFilter: () => dispatch(phoneBookActions.changeFilter('')),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
